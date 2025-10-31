@@ -1,0 +1,48 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "contact": { },
+    "version": "v1"
+  },
+  "paths": {
+    "/notify": {
+      "post": {
+        "tags": [
+          "notifications"
+        ],
+        "description": "Sends a hello world notification to all clients connected to SignalR",
+        "operationId": "post-notify",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Paste only the JWT, Bearer prefix is already added",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "notifications"
+    }
+  ]
+}

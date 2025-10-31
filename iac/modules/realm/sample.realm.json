@@ -1,0 +1,345 @@
+{
+  "realm": "PocSingalR",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "offline_access"
+      },
+      {
+        "name": "uma_authorization"
+      },
+      {
+        "name": "default-roles-PocSingalR",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access",
+            "uma_authorization"
+          ]
+        }
+      }
+    ],
+    "client": {
+      "hub_api": [
+        {
+          "name": "read"
+        },
+        {
+          "name": "write"
+        }
+      ]
+    }
+  },
+  "defaultRole": {
+    "name": "default-roles-PocSingalR",
+    "composite": true,
+    "clientRole": false
+  },
+  "clientScopes": [
+    {
+      "name": "roles",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "hub_api client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "clientId": "hub_api",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "resource_access.hub_api.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud:hub",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "hub_api audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "hub_api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "email",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "web-origins",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "allowed web origins",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-allowed-origins-mapper",
+          "config": {
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "acr",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      }
+    }
+  ],
+  "defaultDefaultClientScopes": [
+    "roles",
+    "profile",
+    "email",
+    "web-origins",
+    "acr"
+  ],
+  "defaultOptionalClientScopes": [
+    "offline_access"
+  ],
+  "clients": [
+    {
+      "clientId": "hub_api",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "<CLIENT_ID>",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr",
+        "aud:hub"
+      ]
+    },
+    {
+      "clientId": "hub_client",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5281/* https://__API_MANAGEMENT_HOST__/api/*"
+      },
+      "redirectUris": [
+        "http://localhost:5281/*",
+        "https://__API_MANAGEMENT_HOST__/api/swagger/oauth2-redirect.html"
+      ],
+      "webOrigins": [
+        "http://localhost:5281",
+        "https://__API_MANAGEMENT_HOST__"
+      ],
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr",
+        "aud:hub"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
+      ]
+    },
+    {
+      "clientId": "postman",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "post.logout.redirect.uris": "+"
+      },
+      "redirectUris": [
+        "https://oauth.pstmn.io/v1/callback"
+      ],
+      "webOrigins": [
+        "https://oauth.pstmn.io"
+      ],
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr",
+        "aud:hub"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
+      ]
+    },
+    {
+      "clientId": "account",
+      "name": "${client_account}",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "rootUrl": "${authBaseUrl}",
+      "baseUrl": "/realms/PocSingalR/account/",
+      "redirectUris": [
+        "/realms/PocSingalR/account/*"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr"
+      ]
+    },
+    {
+      "clientId": "account-console",
+      "name": "${client_account-console}",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "rootUrl": "${authBaseUrl}",
+      "baseUrl": "/realms/PocSingalR/account/",
+      "redirectUris": [
+        "/realms/PocSingalR/account/*"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+"
+      },
+      "defaultClientScopes": [
+        "roles",
+        "profile",
+        "email",
+        "web-origins",
+        "acr"
+      ]
+    },
+    {
+      "clientId": "admin-cli",
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true
+    },
+    {
+      "clientId": "realm-management",
+      "protocol": "openid-connect",
+      "bearerOnly": true
+    },
+    {
+      "clientId": "broker",
+      "protocol": "openid-connect",
+      "bearerOnly": true
+    }
+  ],
+  "users": [
+    {
+      "username": "<USERNAME>",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "<EMAIL>",
+      "realmRoles": [
+        "offline_access",
+        "uma_authorization"
+      ],
+      "clientRoles": {
+        "hub_api": [
+          "read",
+          "write"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "<PASSWORD>",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "service-account-hub_api",
+      "enabled": true,
+      "serviceAccountClientId": "hub_api",
+      "clientRoles": {
+        "hub_api": [
+          "read",
+          "write"
+        ]
+      }
+    }
+  ]
+}
