@@ -5,11 +5,8 @@ using Keycloak.AuthServices.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
-builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration, options =>
-{
-    options.RequireHttpsMetadata = false;
-});
+builder.Services.AddAzureSignalR(builder.Configuration);
+builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
 builder.Services.AddKeycloakAuthorization(builder.Configuration);
 builder.Services.AddOpenApiDocument(builder.Configuration);
 builder.Services.AddCors();

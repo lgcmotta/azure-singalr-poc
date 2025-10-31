@@ -8,6 +8,23 @@ namespace Azure.SignalR.HubApi.Extensions;
 
 internal static class ServiceCollectionsExtensions
 {
+    internal static IServiceCollection AddAzureSignalR(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var connectionString = configuration.GetValue<string>("Azure:SignalR:ConnectionString");
+
+        var signalR = services.AddSignalR();
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            return services;
+        }
+        
+        signalR.AddAzureSignalR();
+
+        return services;
+    }
+    
     internal static IServiceCollection AddOpenApiDocument(this IServiceCollection services,
         IConfiguration configuration)
     {
