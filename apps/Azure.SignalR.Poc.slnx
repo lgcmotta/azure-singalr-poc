@@ -2,6 +2,8 @@
   <Folder Name="/Solution Items/">
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="..\docker-compose.yaml" />
+    <File Path="..\global.json" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Azure.SignalR.HubApi/Azure.SignalR.HubApi.csproj" />
