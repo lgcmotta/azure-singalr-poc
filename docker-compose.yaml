@@ -9,8 +9,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./iac/realm/:/opt/keycloak/data/import/
       - keycloak_data:/opt/keycloak/data/
+      - ./iac/modules/realm.rendered.json:/opt/keycloak/data/import/realm.json
 
 volumes:
   keycloak_data:
