@@ -37,7 +37,9 @@ var connection = new HubConnectionBuilder()
         connection.Headers["Ocp-Apim-Subscription-Key"] = subscriptionKey;
         connection.AccessTokenProvider = async () =>
         {
-            var response = await keycloak.PostCredentialsAsync(options.Value.ToUrlEncodedBody());
+            var body = options.Value.ToUrlEncodedBody();
+
+            var response = await keycloak.PostCredentialsAsync(body);
 
             return response is { IsSuccessStatusCode: true, Content: not null }
                 ? response.Content.AccessToken
