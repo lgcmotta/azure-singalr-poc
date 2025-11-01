@@ -20,7 +20,7 @@ internal static class ServiceCollectionsExtensions
 
         return services;
     }
-    
+
     internal static IServiceCollection AddAzureSignalR(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -32,18 +32,20 @@ internal static class ServiceCollectionsExtensions
         {
             return services;
         }
-        
+
         signalR.AddAzureSignalR();
 
         return services;
     }
-    
+
     internal static IServiceCollection AddOpenApiDocument(this IServiceCollection services,
         IConfiguration configuration)
     {
         var keycloak = configuration.GetKeycloakOptions<KeycloakOAuth2Options>();
 
         var server = configuration.GetValue<string>("OpenApi:Server");
+
+        var subscriptionRequired = configuration.GetValue("OpenApi:SubscriptionRequired", false);
 
         services.AddOpenApi(options =>
         {
@@ -57,6 +59,8 @@ internal static class ServiceCollectionsExtensions
                     Email = configuration.GetValue<string>("OpenApi:Contact:Email")
                 };
             });
+
+            options.WithSubscriptionKey(subscriptionRequired);
 
             if (!string.IsNullOrWhiteSpace(server))
             {
@@ -77,7 +81,7 @@ internal static class ServiceCollectionsExtensions
 
             options.AddJwtBearerSecurityScheme();
         });
-        
+
         return services;
     }
 
