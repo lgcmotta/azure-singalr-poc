@@ -3,6 +3,7 @@ using Azure.SignalR.HubApi.Infrastructure.Keycloak;
 using Azure.SignalR.HubApi.OpenApi;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 
 namespace Azure.SignalR.HubApi.Extensions;
@@ -42,6 +43,8 @@ internal static class ServiceCollectionsExtensions
     {
         var keycloak = configuration.GetKeycloakOptions<KeycloakOAuth2Options>();
 
+        var server = configuration.GetValue<string>("OpenApi:Server");
+
         services.AddOpenApi(options =>
         {
             options.WithOpenApiInfo(info =>
@@ -54,6 +57,11 @@ internal static class ServiceCollectionsExtensions
                     Email = configuration.GetValue<string>("OpenApi:Contact:Email")
                 };
             });
+
+            if (!string.IsNullOrWhiteSpace(server))
+            {
+                options.WithOpenApiServers(new Uri(server));
+            }
 
             if (keycloak is not null)
             {
