@@ -17,13 +17,13 @@ internal static class ServiceCollectionExtensions
             .ConfigureHttpClient(client =>
             {
                 var baseUrl = configuration.GetValue<string>("Keycloak:BaseUrl");
-                
+
                 if (!string.IsNullOrWhiteSpace(baseUrl))
                 {
                     client.BaseAddress = new Uri(baseUrl);
                 }
             });
-        
+
         return services;
     }
 }

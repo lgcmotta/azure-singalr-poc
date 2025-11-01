@@ -1,8 +1,10 @@
+using JetBrains.Annotations;
 using System.Text.Json.Serialization;
 
 namespace Azure.SignalR.HubClient.Clients.Keycloak.Responses;
 
-public record KeycloakAuthResponse
+[UsedImplicitly]
+internal record KeycloakAuthResponse
 {
     [JsonPropertyName("access_token")]
     public string AccessToken { get; init; } = string.Empty;
@@ -18,4 +20,4 @@ public record KeycloakAuthResponse
 
     [JsonPropertyName("id_token")]
     public string IdToken { get; init; } = string.Empty;
-};
+}
