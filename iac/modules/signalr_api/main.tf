@@ -19,7 +19,7 @@ resource "azurerm_api_management_api" "negotiate" {
   protocols             = ["https"]
   path                  = "signalr/client/negotiate"
   service_url           = "https://${var.signalr_hostname}/client/negotiate"
-  subscription_required = true
+  subscription_required = false
 }
 
 resource "azurerm_api_management_api_operation" "options" {
@@ -52,7 +52,7 @@ resource "azurerm_api_management_api" "this" {
   api_type              = "websocket"
   path                  = "signalr/client"
   service_url           = "wss://${var.signalr_hostname}/client/"
-  subscription_required = true
+  subscription_required = false
 }
 
 output "wss_api_id" {
