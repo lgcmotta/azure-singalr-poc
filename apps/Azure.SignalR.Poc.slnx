@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Azure.SignalR.HubApi/Azure.SignalR.HubApi.csproj" />
+    <Project Path="src\Azure.SignalR.HubClient\Azure.SignalR.HubClient.csproj" Type="Classic C#" />
   </Folder>
 </Solution>
