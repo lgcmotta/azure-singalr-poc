@@ -7,10 +7,11 @@ output "signalr_connection_string" {
   value     = azurerm_signalr_service.this.primary_connection_string
 }
 
-# output "api_management_gateway" {
-#   value = azurerm_api_management.this.gateway_url
-# }
+output "api_management_gateway" {
+  value = azurerm_api_management.this.gateway_url
+}
 
-# output "container_app_fqdn" {
-#   value = azurerm_container_app.this.latest_revision_fqdn
-# }
+output "subscription_keys" {
+  value     = module.subscription_keys.subscriptions
+  sensitive = true
+}

@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "4.50.0"
+      version = "4.51.0"
     }
   }
   backend "s3" {
@@ -107,6 +107,20 @@ module "keycloak_app" {
   ]
 }
 
+module "hub_app" {
+  source                            = "./modules/hub_app"
+  container_app_environment_id      = module.containers_env.environment_id
+  resource_group_name               = azurerm_resource_group.this.name
+  gateway_url                       = azurerm_api_management.this.gateway_url
+  signalr_primary_connection_string = azurerm_signalr_service.this.primary_connection_string
+  depends_on = [
+    module.containers_env,
+    azurerm_resource_group.this,
+    azurerm_api_management.this,
+    azurerm_signalr_service.this
+  ]
+}
+
 module "keycloak_api" {
   source              = "./modules/keycloak_api"
   api_management_name = azurerm_api_management.this.name
@@ -115,44 +129,31 @@ module "keycloak_api" {
   depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, module.keycloak_app]
 }
 
+module "hub_api" {
+  source              = "./modules/hub_api"
+  api_management_name = azurerm_api_management.this.name
+  container_app_fqdn  = module.hub_app.hub_container_fqdn
+  resource_group_name = azurerm_resource_group.this.name
+  depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, module.hub_app]
+}
 
-#
-# resource "azurerm_api_management_api" "this" {
-#   name                  = "signalr-connect"
-#   resource_group_name   = azurerm_resource_group.this.name
-#   api_management_name   = azurerm_api_management.this.name
-#   revision              = "1"
-#   display_name          = "SignalR connect"
-#   protocols             = ["wss"]
-#   api_type              = "websocket"
-#   service_url           = "wss://${azurerm_signalr_service.this.hostname}/client/"
-#   subscription_required = true
-#   depends_on            = [azurerm_signalr_service.this]
-# }
+module "signalr_api" {
+  source              = "./modules/signalr_api"
+  resource_group_name = azurerm_resource_group.this.name
+  api_management_name = azurerm_api_management.this.name
+  signalr_hostname    = azurerm_signalr_service.this.hostname
+  depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, azurerm_signalr_service.this]
+}
 
-#
-# resource "azurerm_container_app" "this" {
-#   name                         = "poc-signalr-backend"
-#   container_app_environment_id = azurerm_container_app_environment.this.id
-#   resource_group_name          = azurerm_resource_group.this.name
-#   revision_mode                = "Single"
-#
-#   ingress {
-#     external_enabled = true
-#     target_port      = 8080
-#     transport        = "auto"
-#   }
-#
-#   template {
-#     container {
-#       name   = "api"
-#       image  = "ghcr.io/lgcmotta/azure-signalr-poc/backend:latest"
-#       cpu    = 0.25
-#       memory = "0.5Gi"
-#       env {
-#         name  = "Azure__SignalR__ConnectionString"
-#         value = "${azurerm_signalr_service.this.primary_connection_string};ClientEndpoint=${azurerm_api_management.this.gateway_url}"
-#       }
-#     }
-#   }
-# }
+module "subscription_keys" {
+  source              = "./modules/subscription_key"
+  resource_group_name = azurerm_resource_group.this.name
+  api_management_name = azurerm_api_management.this.name
+  keys = [
+    {
+      name         = var.api_management.subscription_name
+      display_name = var.api_management.subscription_display_name
+    }
+  ]
+  depends_on = [module.hub_api, module.signalr_api]
+}

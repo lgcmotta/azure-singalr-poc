@@ -1,5 +1,5 @@
 {
-  "realm": "PocSingalR",
+  "realm": "PocSignalR",
   "enabled": true,
   "sslRequired": "external",
   "registrationAllowed": false,
@@ -15,7 +15,7 @@
         "name": "uma_authorization"
       },
       {
-        "name": "default-roles-PocSingalR",
+        "name": "default-roles-PocSignalR",
         "composite": true,
         "composites": {
           "realm": [
@@ -37,7 +37,7 @@
     }
   },
   "defaultRole": {
-    "name": "default-roles-PocSingalR",
+    "name": "default-roles-PocSignalR",
     "composite": true,
     "clientRole": false
   },
@@ -250,9 +250,9 @@
       "publicClient": true,
       "standardFlowEnabled": true,
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/PocSingalR/account/",
+      "baseUrl": "/realms/PocSignalR/account/",
       "redirectUris": [
-        "/realms/PocSingalR/account/*"
+        "/realms/PocSignalR/account/*"
       ],
       "attributes": {
         "post.logout.redirect.uris": "+"
@@ -272,9 +272,9 @@
       "publicClient": true,
       "standardFlowEnabled": true,
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/PocSingalR/account/",
+      "baseUrl": "/realms/PocSignalR/account/",
       "redirectUris": [
-        "/realms/PocSingalR/account/*"
+        "/realms/PocSignalR/account/*"
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",

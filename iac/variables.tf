@@ -25,3 +25,10 @@ variable "keycloak_admin_password" {
   type      = string
   sensitive = true
 }
+
+variable "api_management" {
+  type = object({
+    subscription_name         = string
+    subscription_display_name = string
+  })
+}

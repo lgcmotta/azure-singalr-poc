@@ -1,0 +1,68 @@
+variable "resource_group_name" {
+  type = string
+}
+
+variable "container_app_fqdn" {
+  type = string
+}
+
+variable "api_management_name" {
+  type = string
+}
+
+resource "azurerm_api_management_api" "this" {
+  name                  = "hub-api"
+  display_name          = "Hub API"
+  api_management_name   = var.api_management_name
+  resource_group_name   = var.resource_group_name
+  revision              = "1"
+  path                  = "api"
+  protocols             = ["https"]
+  service_url           = "https://${var.container_app_fqdn}"
+  subscription_required = false
+}
+
+resource "azurerm_api_management_api_policy" "this" {
+  api_management_name = azurerm_api_management_api.this.api_management_name
+  resource_group_name = azurerm_api_management_api.this.resource_group_name
+  api_name            = azurerm_api_management_api.this.name
+  depends_on          = [azurerm_api_management_api.this]
+  xml_content         = <<XML
+<policies>
+    <inbound>
+        <base />
+        <choose>
+            <when condition="@(!context.Request.Url.ToString().Contains("swagger"))">
+                <check-header name="Ocp-Apim-Subscription-Key" failed-check-httpcode="401" failed-check-error-message="Subscription key is required." />
+            </when>
+        </choose>
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
+XML
+}
+
+resource "azurerm_api_management_api_operation" "this" {
+  for_each            = toset(["get", "post", "put", "delete", "patch", "options", "head"])
+  api_management_name = azurerm_api_management_api.this.api_management_name
+  resource_group_name = azurerm_api_management_api.this.resource_group_name
+  api_name            = azurerm_api_management_api.this.name
+  operation_id        = "hub-${each.key}"
+  display_name        = "${upper(each.value)} /*"
+  method              = upper(each.value)
+  template_parameter {
+    name     = "path"
+    required = false
+    type     = "string"
+  }
+  url_template = "/{*path}"
+  depends_on   = [azurerm_api_management_api.this]
+}
