@@ -19,35 +19,7 @@ resource "azurerm_api_management_api" "this" {
   path                  = "api"
   protocols             = ["https"]
   service_url           = "https://${var.container_app_fqdn}"
-  subscription_required = false
-}
-
-resource "azurerm_api_management_api_policy" "this" {
-  api_management_name = azurerm_api_management_api.this.api_management_name
-  resource_group_name = azurerm_api_management_api.this.resource_group_name
-  api_name            = azurerm_api_management_api.this.name
-  depends_on          = [azurerm_api_management_api.this]
-  xml_content         = <<XML
-<policies>
-    <inbound>
-        <base />
-        <choose>
-            <when condition="@(!context.Request.Url.ToString().Contains("swagger"))">
-                <check-header name="Ocp-Apim-Subscription-Key" failed-check-httpcode="401" failed-check-error-message="Subscription key is required." />
-            </when>
-        </choose>
-    </inbound>
-    <backend>
-        <base />
-    </backend>
-    <outbound>
-        <base />
-    </outbound>
-    <on-error>
-        <base />
-    </on-error>
-</policies>
-XML
+  subscription_required = true
 }
 
 resource "azurerm_api_management_api_operation" "this" {
