@@ -2,6 +2,7 @@ using Azure.SignalR.HubApi.Infrastructure.Keycloak;
 using Keycloak.AuthServices.Common;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -15,11 +16,11 @@ internal static class WebApplicationExtensions
         {
             Predicate = check => check.Tags.Contains("ready")
         });
-        
+
         return app;
     }
-    
-    
+
+
     internal static WebApplication MapLivenessHealthCheck(this WebApplication app)
     {
         app.MapHealthChecks("/healthz/live", new HealthCheckOptions
@@ -41,40 +42,44 @@ internal static class WebApplicationExtensions
 
                 context.Response.StatusCode = statusCode;
                 context.Response.ContentType = contentType;
-                
+
                 await context.Response.WriteAsJsonAsync(new
                 {
                     Status = report.Status.ToString(),
                     Components = components
                 });
-            } 
+            }
         });
-        
+
         return app;
     }
-    
+
     internal static WebApplication UsePermissiveCors(this WebApplication app)
     {
         app.Configuration.GetValue<string[]>("CorsOrigins");
-        
+
         app.UseCors(builder => builder.AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
             .SetIsOriginAllowed(_ => true)
             .WithOrigins());
-        
+
         return app;
     }
 
     internal static WebApplication UseOpenApiInterface(this WebApplication app)
     {
-        app.MapOpenApi("swagger/openapi/v1.json");
+        var pattern = app.Configuration.GetValue<string>("OpenApi:DocumentEndpoint", "swagger/openapi/v1.json");
+
+        var swaggerEndpoint = app.Configuration.GetValue<string>("OpenApi:SwaggerEndpoint", "openapi/v1.json");
+
+        app.MapOpenApi(pattern);
 
         var keycloak = app.Configuration.GetKeycloakOptions<KeycloakOAuth2Options>();
 
         app.UseSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("openapi/v1.json", "v1");
+            options.SwaggerEndpoint(swaggerEndpoint, "v1");
 
             if (keycloak is null)
             {
