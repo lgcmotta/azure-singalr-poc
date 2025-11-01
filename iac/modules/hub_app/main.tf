@@ -117,7 +117,7 @@ resource "azurerm_container_app" "this" {
 
       env {
         name  = "OpenApi__DocumentEndpoint"
-        value = "openapi/v1.json"
+        value = "swagger/openapi/v1.json"
       }
 
       env {
