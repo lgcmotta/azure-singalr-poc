@@ -5,6 +5,7 @@ using Keycloak.AuthServices.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddJsonConsole();
 builder.Services.AddContainerHealthChecks();
 builder.Services.AddAzureSignalR(builder.Configuration);
 builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
