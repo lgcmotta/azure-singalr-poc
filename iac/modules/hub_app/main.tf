@@ -111,6 +111,21 @@ resource "azurerm_container_app" "this" {
       }
 
       env {
+        name  = "OpenApi__SubscriptionRequired"
+        value = "true"
+      }
+
+      env {
+        name  = "OpenApi__DocumentEndpoint"
+        value = "openapi/v1.json"
+      }
+
+      env {
+        name  = "OpenApi__SwaggerEndpoint"
+        value = "openapi/v1.json?subscription-key={apimKey}"
+      }
+
+      env {
         name  = "OpenApi__Contact__Name"
         value = "Luiz Motta"
       }
