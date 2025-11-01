@@ -1,3 +1,4 @@
+using Azure.SignalR.HubApi.HealthChecks;
 using Azure.SignalR.HubApi.Infrastructure.Keycloak;
 using Azure.SignalR.HubApi.OpenApi;
 using Keycloak.AuthServices.Authorization;
@@ -8,6 +9,17 @@ namespace Azure.SignalR.HubApi.Extensions;
 
 internal static class ServiceCollectionsExtensions
 {
+    internal static IServiceCollection AddContainerHealthChecks(this IServiceCollection services)
+    {
+        services.AddHostedService<ReadinessBackgroundService>();
+        services.AddSingleton<ReadinessHealthCheck>();
+
+        services.AddHealthChecks()
+            .AddCheck<ReadinessHealthCheck>("Readiness", tags: ["ready"]);
+
+        return services;
+    }
+    
     internal static IServiceCollection AddAzureSignalR(this IServiceCollection services,
         IConfiguration configuration)
     {
