@@ -3,16 +3,40 @@ services:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:26.3
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HOSTNAME: localhost
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: kcp4ssw0rd
     command: ["start-dev", "--import-realm"]
     ports:
       - "8080:8080"
     volumes:
       - keycloak_data:/opt/keycloak/data/
-      - ./iac/modules/realm.rendered.json:/opt/keycloak/data/import/realm.json
+      - ./iac/modules/realm/realm.local.json:/opt/keycloak/data/import/realm.json:ro
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: mirror.gcr.io/postgres:latest
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kcp4ssw0rd
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   keycloak_data:
     name: keycloak_data
+    external: false
+  postgres_data:
+    name: postgres_data
     external: false
