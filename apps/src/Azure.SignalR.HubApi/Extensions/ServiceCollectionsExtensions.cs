@@ -1,6 +1,7 @@
 using Azure.SignalR.HubApi.HealthChecks;
 using Azure.SignalR.HubApi.Infrastructure.Keycloak;
 using Azure.SignalR.HubApi.OpenApi;
+using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Keycloak.AuthServices.Common;
 using Microsoft.OpenApi;
@@ -34,6 +35,21 @@ internal static class ServiceCollectionsExtensions
         }
 
         signalR.AddAzureSignalR();
+
+        return services;
+    }
+
+    internal static IServiceCollection AddKeycloak(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var https = configuration.GetValue("Keycloak:RequireHttpsMetadata", true);
+
+        services.AddKeycloakWebApiAuthentication(configuration, options =>
+        {
+            options.RequireHttpsMetadata = https;
+        });
+
+        services.AddKeycloakAuthorization(configuration);
 
         return services;
     }

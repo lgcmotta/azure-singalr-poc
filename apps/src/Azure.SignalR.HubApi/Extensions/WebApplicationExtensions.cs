@@ -58,11 +58,13 @@ internal static class WebApplicationExtensions
     {
         var origins = app.Configuration.GetSection("CorsOrigins").Get<string[]>() ?? [];
 
-        app.UseCors(builder => builder.AllowAnyMethod()
+        app.UseCors(builder => builder
+            .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
             .SetIsOriginAllowed(_ => true)
-            .WithOrigins(origins));
+            .WithOrigins(origins)
+        );
 
         return app;
     }

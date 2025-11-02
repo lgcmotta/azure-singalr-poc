@@ -8,8 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddJsonConsole();
 builder.Services.AddContainerHealthChecks();
 builder.Services.AddAzureSignalR(builder.Configuration);
-builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
-builder.Services.AddKeycloakAuthorization(builder.Configuration);
+builder.Services.AddKeycloak(builder.Configuration);
 builder.Services.AddOpenApiDocument(builder.Configuration);
 builder.Services.AddCors();
 
