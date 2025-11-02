@@ -56,7 +56,7 @@ internal static class WebApplicationExtensions
 
     internal static WebApplication UsePermissiveCors(this WebApplication app)
     {
-        var origins = app.Configuration.GetValue<string[]>("CorsOrigins", []);
+        var origins = app.Configuration.GetSection("CorsOrigins").Get<string[]>() ?? [];
 
         app.UseCors(builder => builder.AllowAnyMethod()
             .AllowAnyHeader()

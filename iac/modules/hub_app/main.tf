@@ -141,6 +141,11 @@ resource "azurerm_container_app" "this" {
       }
 
       env {
+        name  = "CorsOrigins__1"
+        value = "http://localhost:5281"
+      }
+
+      env {
         name  = "AppContainer_Revision"
         value = "r${timestamp()}"
       }
