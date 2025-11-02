@@ -98,6 +98,8 @@ module "keycloak_app" {
   storage_account_name               = module.storage_account.name
   storage_account_primary_access_key = module.storage_account.primary_access_key
   storage_share_name                 = module.storage_account.storage_share_name
+  min_replicas                       = var.containers.min_replicas
+  max_replicas                       = var.containers.max_replicas
   depends_on = [
     azurerm_resource_group.this,
     azurerm_api_management.this,
@@ -113,6 +115,8 @@ module "hub_app" {
   resource_group_name               = azurerm_resource_group.this.name
   gateway_url                       = azurerm_api_management.this.gateway_url
   signalr_primary_connection_string = azurerm_signalr_service.this.primary_connection_string
+  min_replicas                      = var.containers.min_replicas
+  max_replicas                      = var.containers.max_replicas
   depends_on = [
     module.containers_env,
     azurerm_resource_group.this,
@@ -121,39 +125,52 @@ module "hub_app" {
   ]
 }
 
-module "keycloak_api" {
-  source              = "./modules/keycloak_api"
-  api_management_name = azurerm_api_management.this.name
-  container_app_fqdn  = module.keycloak_app.keycloak_container_fqdn
+module "web_app" {
+  source              = "./modules/web_app"
+  location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
-  depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, module.keycloak_app]
-}
-
-module "hub_api" {
-  source              = "./modules/hub_api"
-  api_management_name = azurerm_api_management.this.name
-  container_app_fqdn  = module.hub_app.hub_container_fqdn
-  resource_group_name = azurerm_resource_group.this.name
-  depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, module.hub_app]
-}
-
-module "signalr_api" {
-  source              = "./modules/signalr_api"
-  resource_group_name = azurerm_resource_group.this.name
-  api_management_name = azurerm_api_management.this.name
-  signalr_hostname    = azurerm_signalr_service.this.hostname
-  depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, azurerm_signalr_service.this]
-}
-
-module "subscription_keys" {
-  source              = "./modules/subscription_key"
-  resource_group_name = azurerm_resource_group.this.name
-  api_management_name = azurerm_api_management.this.name
-  keys = [
-    {
-      name         = var.api_management.subscription_name
-      display_name = var.api_management.subscription_display_name
-    }
+  resource_suffix     = random_string.this.result
+  depends_on = [
+    module.containers_env,
+    azurerm_resource_group.this,
+    azurerm_api_management.this,
+    azurerm_signalr_service.this
   ]
-  depends_on = [module.hub_api, module.signalr_api]
 }
+
+# module "keycloak_api" {
+#   source              = "./modules/keycloak_api"
+#   api_management_name = azurerm_api_management.this.name
+#   container_app_fqdn  = module.keycloak_app.keycloak_container_fqdn
+#   resource_group_name = azurerm_resource_group.this.name
+#   depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, module.keycloak_app]
+# }
+#
+# module "hub_api" {
+#   source              = "./modules/hub_api"
+#   api_management_name = azurerm_api_management.this.name
+#   container_app_fqdn  = module.hub_app.hub_container_fqdn
+#   resource_group_name = azurerm_resource_group.this.name
+#   depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, module.hub_app]
+# }
+#
+# module "signalr_api" {
+#   source              = "./modules/signalr_api"
+#   resource_group_name = azurerm_resource_group.this.name
+#   api_management_name = azurerm_api_management.this.name
+#   signalr_hostname    = azurerm_signalr_service.this.hostname
+#   depends_on          = [azurerm_api_management.this, azurerm_resource_group.this, azurerm_signalr_service.this]
+# }
+#
+# module "subscription_keys" {
+#   source              = "./modules/subscription_key"
+#   resource_group_name = azurerm_resource_group.this.name
+#   api_management_name = azurerm_api_management.this.name
+#   keys = [
+#     {
+#       name         = var.api_management.subscription_name
+#       display_name = var.api_management.subscription_display_name
+#     }
+#   ]
+#   depends_on = [module.hub_api, module.signalr_api]
+# }

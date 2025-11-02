@@ -32,3 +32,10 @@ variable "api_management" {
     subscription_display_name = string
   })
 }
+
+variable "containers" {
+  type = object({
+    min_replicas = number
+    max_replicas = number
+  })
+}

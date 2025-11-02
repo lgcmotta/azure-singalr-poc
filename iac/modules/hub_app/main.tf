@@ -15,6 +15,14 @@ variable "signalr_primary_connection_string" {
   sensitive = true
 }
 
+variable "min_replicas" {
+  type = number
+}
+
+variable "max_replicas" {
+  type = number
+}
+
 resource "azurerm_container_app" "this" {
   name                         = "hub-app"
   container_app_environment_id = var.container_app_environment_id
@@ -32,8 +40,8 @@ resource "azurerm_container_app" "this" {
   }
 
   template {
-    min_replicas = 1
-    max_replicas = 2
+    min_replicas = var.min_replicas
+    max_replicas = var.max_replicas
     container {
       name   = "hub-app"
       image  = "ghcr.io/lgcmotta/azure-signalr-poc/api:latest"
@@ -83,6 +91,11 @@ resource "azurerm_container_app" "this" {
       env {
         name  = "Keycloak__VerifyTokenAudience"
         value = "false"
+      }
+
+      env {
+        name  = "Keycloak__RequireHttpsMetadata"
+        value = "true"
       }
 
       env {

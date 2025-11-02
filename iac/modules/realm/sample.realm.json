@@ -188,14 +188,22 @@
       "standardFlowEnabled": true,
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:5281/* https://__API_MANAGEMENT_HOST__/api/*"
+        "post.logout.redirect.uris": [
+          "http://localhost:5281/*",
+          "http://localhost:5173/*",
+          "https://__API_MANAGEMENT_HOST__/api/*",
+          "https://__API_MANAGEMENT_HOST__/app/*"
+        ]
       },
       "redirectUris": [
         "http://localhost:5281/*",
+        "http://localhost:5173/*",
+        "https://__API_MANAGEMENT_HOST__/app/*",
         "https://__API_MANAGEMENT_HOST__/api/swagger/oauth2-redirect.html"
       ],
       "webOrigins": [
         "http://localhost:5281",
+        "http://localhost:5173",
         "https://__API_MANAGEMENT_HOST__"
       ],
       "defaultClientScopes": [
