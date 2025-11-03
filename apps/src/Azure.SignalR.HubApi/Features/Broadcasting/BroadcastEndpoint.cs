@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Azure.SignalR.HubApi.Features.Broadcasting;
 
+internal record NotificationRequest(string Message);
+
 internal static class BroadcastEndpoint
 {
     internal static WebApplication MapPostNotify(this WebApplication app)
@@ -19,11 +21,12 @@ internal static class BroadcastEndpoint
     }
 
     private static async Task<IResult> Post([FromServices] IHubContext<NotificationHub> hub,
+        [FromBody] NotificationRequest request,
         CancellationToken cancellationToken = default)
     {
         await hub.Clients.All.SendAsync(
             method: "receiveNotification",
-            arg1: new { Message = "Hello, world!" },
+            arg1: request,
             cancellationToken: cancellationToken
         );
 

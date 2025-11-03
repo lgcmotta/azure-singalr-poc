@@ -7,5 +7,4 @@ namespace Azure.SignalR.HubApi.Hubs;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class NotificationHub : Hub
 {
-    
 }
