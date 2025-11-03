@@ -31,7 +31,7 @@ class Connector {
         },
         accessTokenFactory: options.accessTokenFactory,
         skipNegotiation: options.skipNegotiation,
-        transport: HttpTransportType.WebSockets
+        transport: options.transport
       })
       .withAutomaticReconnect()
       .build();
