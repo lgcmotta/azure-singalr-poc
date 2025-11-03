@@ -39,3 +39,10 @@ variable "containers" {
     max_replicas = number
   })
 }
+
+
+variable "swa" {
+  type = object({
+    public_access = bool
+  })
+}

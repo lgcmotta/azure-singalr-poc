@@ -64,6 +64,7 @@ module "web_app" {
   location            = "westeurope"
   resource_group_name = azurerm_resource_group.this.name
   resource_suffix     = random_string.this.result
+  public_access       = var.swa.public_access
   depends_on = [
     azurerm_resource_group.this,
     azurerm_api_management.this,
