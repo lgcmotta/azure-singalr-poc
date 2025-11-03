@@ -1,6 +1,6 @@
 import { useAuth } from "react-oidc-context";
 import { useEffect, useEffectEvent, useMemo, useState } from "react";
-import Connector, { type Notification } from "@/lib/signalr";
+import Connector, { convertTransportType, type Notification } from "@/lib/signalr";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -15,7 +15,7 @@ export function Notifications() {
   const token = auth.user?.access_token ?? "";
 
   const handler = useMemo(
-    () => (n: Notification) => setNotifications(old => [...old, n]),
+    () => (n: Notification) => setNotifications(old => [ ...old, n ]),
     []
   );
 
@@ -23,10 +23,15 @@ export function Notifications() {
 
   useEffect(() => {
     if (!token) return undefined
-    const { events } = Connector(async () => token);
+    const { events } = Connector({
+      accessTokenFactory: async () => token,
+      subscriptionKey: import.meta.env.VITE_APIM_SUBSCRIPTION_KEY,
+      transport: convertTransportType(import.meta.env.VITE_SIGNALR_TRANSPORT),
+      skipNegotiation: import.meta.env.VITE_SIGNALR_SKIP_NEGOTIATION ?? false
+    });
 
     return events(handler)
-  }, [token, handler])
+  }, [ token, handler ])
 
   const name = auth.user?.profile?.name ?? "user";
   const initials = name.split(" ").map(s => s[0]).join("").slice(0, 2).toUpperCase();

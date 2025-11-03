@@ -8,6 +8,12 @@ const URL = !import.meta.env.VITE_APIM_SUBSCRIPTION_KEY
   ? import.meta.env.VITE_SIGNALR_HUB_URL
   : `${import.meta.env.VITE_SIGNALR_HUB_URL}?subscription-key=${import.meta.env.VITE_APIM_SUBSCRIPTION_KEY}`
 
+type ConnectorOptions = {
+  accessTokenFactory: () => Promise<string>,
+  skipNegotiation: boolean
+  transport: HttpTransportType
+  subscriptionKey: string
+}
 
 
 class Connector {
@@ -17,11 +23,15 @@ class Connector {
 
   static instance: Connector;
 
-  constructor(accessTokenFactory: ()=> Promise<string>) {
+  constructor(options: ConnectorOptions) {
     this.connection = new HubConnectionBuilder()
       .withUrl(URL, {
-        accessTokenFactory: accessTokenFactory,
-        transport: HttpTransportType.LongPolling
+        headers: {
+          "Ocp-Apim-Subscription-Key": options.subscriptionKey
+        },
+        accessTokenFactory: options.accessTokenFactory,
+        skipNegotiation: options.skipNegotiation,
+        transport: options.transport
       })
       .withAutomaticReconnect()
       .build();
@@ -37,11 +47,26 @@ class Connector {
     };
   }
 
-  public static getInstance(accessTokenFactory: ()=> Promise<string>): Connector {
+  public static getInstance(options: ConnectorOptions): Connector {
     if (!Connector.instance)
-      Connector.instance = new Connector(accessTokenFactory);
+      Connector.instance = new Connector(options);
     return Connector.instance;
   }
+}
+
+export function convertTransportType(transport: keyof typeof HttpTransportType | string): HttpTransportType {
+  switch (transport) {
+    case "None":
+      return HttpTransportType.None
+    case "WebSockets":
+      return HttpTransportType.WebSockets
+    case "ServerSentEvents":
+      return HttpTransportType.ServerSentEvents
+    case "LongPolling":
+      return HttpTransportType.LongPolling
+  }
+
+  return HttpTransportType.WebSockets
 }
 
 export default Connector.getInstance;
