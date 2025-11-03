@@ -1,6 +1,6 @@
 import { useAuth } from "react-oidc-context";
 import { useEffect, useEffectEvent, useMemo, useState } from "react";
-import Connector, { convertTransportType, type Notification } from "@/lib/signalr";
+import Connector, { convertSkipNegotiation, convertTransportType, type Notification } from "@/lib/signalr";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -27,7 +27,7 @@ export function Notifications() {
       accessTokenFactory: async () => token,
       subscriptionKey: import.meta.env.VITE_APIM_SUBSCRIPTION_KEY,
       transport: convertTransportType(import.meta.env.VITE_SIGNALR_TRANSPORT),
-      skipNegotiation: import.meta.env.VITE_SIGNALR_SKIP_NEGOTIATION ?? false
+      skipNegotiation: convertSkipNegotiation(import.meta.env.VITE_SIGNALR_SKIP_NEGOTIATION)
     });
 
     return events(handler)

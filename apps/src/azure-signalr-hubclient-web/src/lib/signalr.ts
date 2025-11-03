@@ -31,7 +31,7 @@ class Connector {
         },
         accessTokenFactory: options.accessTokenFactory,
         skipNegotiation: options.skipNegotiation,
-        transport: options.transport
+        transport: HttpTransportType.WebSockets
       })
       .withAutomaticReconnect()
       .build();
@@ -67,6 +67,11 @@ export function convertTransportType(transport: keyof typeof HttpTransportType |
   }
 
   return HttpTransportType.WebSockets
+}
+
+export function convertSkipNegotiation(skip: string) {
+  if (skip === "false") return false
+  return skip === "true";
 }
 
 export default Connector.getInstance;
