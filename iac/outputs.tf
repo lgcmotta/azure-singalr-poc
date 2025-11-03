@@ -11,7 +11,16 @@ output "api_management_gateway" {
   value = azurerm_api_management.this.gateway_url
 }
 
-output "subscription_keys" {
-  value     = module.subscription_keys.subscriptions
-  sensitive = true
+output "swa_hostname" {
+  value = module.web_app.hostname
 }
+
+output "swa_api_key" {
+  sensitive = true
+  value     = module.web_app.api_key
+}
+
+# output "subscription_keys" {
+#   sensitive = true
+#   value     = module.subscription_keys.subscriptions
+# }
