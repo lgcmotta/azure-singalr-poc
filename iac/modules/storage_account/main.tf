@@ -42,6 +42,10 @@ resource "azurerm_storage_share_file" "this" {
   name             = each.key
   storage_share_id = azurerm_storage_share.this.url
   source           = each.value.source
+  lifecycle {
+    prevent_destroy       = false
+    create_before_destroy = true
+  }
 }
 
 output "name" {

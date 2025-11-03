@@ -94,37 +94,16 @@ resource "azurerm_container_app" "this" {
         value = var.keycloak_admin_password
       }
 
+      env {
+        name  = "AppContainer_Revision"
+        value = "r${timestamp()}"
+      }
+
       volume_mounts {
         name = azurerm_container_app_environment_storage.this.name
         path = "/opt/keycloak/data/import"
       }
-
-      # readiness_probe {
-      #   port             = 8080
-      #   transport        = "HTTPS"
-      #   path             = "/keycloak/health/ready"
-      #   initial_delay    = 60
-      #   interval_seconds = 10
-      # }
-      #
-      # liveness_probe {
-      #   port             = 8080
-      #   transport        = "HTTPS"
-      #   path             = "/health/live"
-      #   initial_delay    = 60
-      #   interval_seconds = 10
-      # }
-      #
-      # startup_probe {
-      #   port                    = 8080
-      #   transport               = "HTTPS"
-      #   path                    = "/health/started"
-      #   initial_delay           = 20
-      #   interval_seconds        = 10
-      #   failure_count_threshold = 20
-      # }
     }
-
 
     volume {
       name          = azurerm_container_app_environment_storage.this.name
