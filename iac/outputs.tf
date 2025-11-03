@@ -20,7 +20,7 @@ output "swa_api_key" {
   value     = module.web_app.api_key
 }
 
-# output "subscription_keys" {
-#   sensitive = true
-#   value     = module.subscription_keys.subscriptions
-# }
+output "subscription_keys" {
+  sensitive = true
+  value     = module.subscription_keys.subscriptions
+}

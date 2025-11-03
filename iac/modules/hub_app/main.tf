@@ -10,6 +10,10 @@ variable "gateway_url" {
   type = string
 }
 
+variable "swa_hostname" {
+  type = string
+}
+
 variable "signalr_primary_connection_string" {
   type      = string
   sensitive = true
@@ -156,6 +160,16 @@ resource "azurerm_container_app" "this" {
       env {
         name  = "CorsOrigins__1"
         value = "http://localhost:5281"
+      }
+
+      env {
+        name  = "CorsOrigins__2"
+        value = "https://${var.swa_hostname}"
+      }
+
+      env {
+        name  = "CorsOrigins__3"
+        value = "http://localhost:5173"
       }
 
       env {
