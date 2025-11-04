@@ -173,5 +173,5 @@ module "subscription_keys" {
       display_name = var.api_management.subscription_display_name
     }
   ]
-  depends_on = [module.hub_api, module.signalr_api]
+  depends_on = [module.hub_api]
 }
