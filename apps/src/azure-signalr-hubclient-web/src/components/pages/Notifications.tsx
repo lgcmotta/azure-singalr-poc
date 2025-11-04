@@ -8,11 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-
 export function Notifications() {
   const auth = useAuth();
   const [ notifications, setNotifications ] = useState<Notification[]>([]);
+  const [ profile, setProfile ] = useState<string>("")
   const token = auth.user?.access_token ?? "";
+  const name = auth.user?.profile?.given_name ?? "";
 
   const handler = useMemo(
     () => (n: Notification) => setNotifications(old => [ ...old, n ]),
@@ -33,8 +34,19 @@ export function Notifications() {
     return events(handler)
   }, [ token, handler ])
 
-  const name = auth.user?.profile?.name ?? "user";
-  const initials = name.split(" ").map(s => s[0]).join("").slice(0, 2).toUpperCase();
+  useEffect(() => {
+    if (!name) return undefined
+
+    const first = name.split(" ")
+      .map(s => s[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
+    setProfile(first)
+
+    return () => setProfile("")
+  }, [ name ])
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground overflow-hidden">
@@ -47,13 +59,12 @@ export function Notifications() {
               SignalR WebClient POC
             </span>
           </div>
-
           <div className="ml-auto flex items-center gap-6">
             <Avatar className="h-8 w-8">
-              <AvatarFallback>{initials || "U"}</AvatarFallback>
+              <AvatarFallback>{profile || "U"}</AvatarFallback>
             </Avatar>
             <Button variant="outline" size="sm" onClick={signOut}>
-              Logout
+              Sign Out
             </Button>
           </div>
         </div>
@@ -72,12 +83,12 @@ export function Notifications() {
                     No messages yet.
                   </CardContent>
                 )}
-                {notifications.map((n, i) => (
+                {notifications.map((notification, index) => (
                   <CardContent
-                    key={i}
+                    key={index}
                     className="rounded-md border bg-card p-3 text-card-foreground"
                   >
-                    {n.message}
+                    {notification.message}
                   </CardContent>
                 ))}
               </ul>
